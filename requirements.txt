@@ -1,0 +1,16 @@
+pandas
+numpy
+dill
+matplotlib
+scikit-learn
+scipy
+statsmodels
+seaborn
+pymongo
+python-dotenv
+logger
+xgboost
+imblearn
+pip-chill
+apache-airflow
+
