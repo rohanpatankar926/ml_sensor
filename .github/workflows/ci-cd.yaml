@@ -11,45 +11,45 @@ permissions:
 
 
 jobs: #runners 
- build-and-push-ecr-image: #runner name 
-  name: Continuous Delivery
-  runs-on: ubuntu-latest
-  steps:
-   - name: Checkout Code #from github repo to the github vm 
-     uses: actions/checkout@v3
-   - name: Install Utilities
-     run: |
-      sudo apt-get update
-      sudo apt-get install -y jq unzip
+#  build-and-push-ecr-image: #runner name 
+#   name: Continuous Delivery
+#   runs-on: ubuntu-latest
+#   steps:
+#    - name: Checkout Code #from github repo to the github vm 
+#      uses: actions/checkout@v3
+#    - name: Install Utilities
+#      run: |
+#       sudo apt-get update
+#       sudo apt-get install -y jq unzip
 
-   - name: Configure AWS credentials
-     uses: aws-actions/configure-aws-credentials@v1
-     with:
-      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-      aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-      aws-region: ${{ secrets.AWS_REGION_NAME }}
+#    - name: Configure AWS credentials
+#      uses: aws-actions/configure-aws-credentials@v1
+#      with:
+#       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+#       aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+#       aws-region: ${{ secrets.AWS_REGION_NAME }}
 
-   - name: Login to Amazon ECR
-     id: login-ecr
-     uses: aws-actions/amazon-ecr-login@v1
+#    - name: Login to Amazon ECR
+#      id: login-ecr
+#      uses: aws-actions/amazon-ecr-login@v1
     
-   - name: Build, tag, and push image to Amazon ECR
-     id: build-image
-     env:
-      ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      ECR_REPOSITORY: mlsensorecr
-      IMAGE_TAG: latest
-     run: |
-       # Build a docker container and
-       # push it to ECR so that it can
-       # be deployed to ECS.
-       docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-       docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-       echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" 
+#    - name: Build, tag, and push image to Amazon ECR
+#      id: build-image
+#      env:
+#       ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#       ECR_REPOSITORY: mlsensorecr
+#       IMAGE_TAG: latest
+#      run: |
+#        # Build a docker container and
+#        # push it to ECR so that it can
+#        # be deployed to ECS.
+#        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+#        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" 
 
  Continuous-Deployment: #name
   name: continuous deployment
-  needs: build-and-push-ecr-image
+  # needs: build-and-push-ecr-image
   runs-on: self-hosted
   steps:
   - name: Checkout
@@ -73,7 +73,7 @@ jobs: #runners
     
   - name: Pull docker image
     run: |
-      sudo docker pull ${{secrets.AWS_ECR_LOGIN_URI}}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+      sudo env "PATH=$PATH" docker pull ${{secrets.AWS_ECR_LOGIN_URI}}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
   - name: Run Docker Image to serve users
     run: |
       export IMAGE_NAME="${{secrets.AWS_ECR_LOGIN_URI}}"/"${{ secrets.ECR_REPOSITORY_NAME }}":latest AWS_ACCESS_KEY="${{ secrets.AWS_ACCESS_KEY }}" AWS_SECRET_KEY="${{ secrets.AWS_SECRET_KEY }}" AWS_REGION_NAME=${{ secrets.AWS_REGION_NAME }} BUCKET_NAME=${{ secrets.BUCKET_NAME }} "MONGO_DB_URL=${{ secrets.MONGO_DB_URL }}" && sudo docker compose up -d
