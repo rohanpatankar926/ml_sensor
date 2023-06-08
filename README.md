@@ -291,3 +291,11 @@ i) dag if i run 1st dag saved_model and artifacts get generated from this i dire
 
 ii)i need to have already the new data on my s3 bucket--->we fetch the data from s3 bucket and from s3 bucket-->start running a pipeline for a new data --> prediction.csv file will be generated 
 171 columns --> extra columns prediction column --> 172 columns --> deploy this predictions.csv data to same s3 bucket with dir name as prediction
+
+
+aws deployment
+
+ec2 machine -> vm
+ecr-->
+ecs-->
+github actions
