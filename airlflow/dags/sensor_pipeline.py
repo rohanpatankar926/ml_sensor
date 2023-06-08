@@ -19,7 +19,7 @@ def training(**kwargs):
     simple_pipeline.pipeline_inititate()
 
 def sync_data_to_s3_bucket(**kwargs):
-    bucket_name="sensorbucket98866"
+    bucket_name="s3sensor"
     os.system(f"aws s3 sync /sensor/artifacts s3://{bucket_name}/artifacts/")
     os.system(f"aws s3 sync /sensor/saved_models s3://{bucket_name}/saved_models")
 
