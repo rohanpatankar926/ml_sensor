@@ -8,11 +8,11 @@ from airflow.operators.bash import BashOperator
 
 def download_files(**kwargs):
     global bucket_name
-    bucket_name="sensordata98866"
+    bucket_name="sensordata9886600"
     global input_dir
-    input_dir="input_files"
+    input_dir="/input_files"
     os.makedirs(input_dir,exist_ok=True)
-    os.system(f"aws s3 sync s3://{bucket_name}/input_files input_files/")
+    os.system(f"aws s3 sync s3://{bucket_name}/input_files/ /input_files/ --recursive")
 
 def batch_prediction(**kwargs):
     from sensor.pipeline import batch_pred
@@ -20,7 +20,7 @@ def batch_prediction(**kwargs):
         batch_pred.start_batch_data_predsiction(input_file_path=os.path.join(input_dir,file_name))
 
 def sync_prediction_to_s3_bucket(**kwargs):
-    os.system(f"aws s3 sync /sensor/prediction s3://{bucket_name}/prediction")
+    os.system(f"aws s3 sync /sensor/prediction s3://{bucket_name}/prediction/ --recursive")
 
 bash_success="echo 'Batch Prediction is completed successfully'"
 
