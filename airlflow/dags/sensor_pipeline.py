@@ -21,7 +21,7 @@ def training(**kwargs):
 def sync_data_to_s3_bucket(**kwargs):
     bucket_name="s3sensor"
     os.system(f"aws s3 sync /sensor/artifacts s3://{bucket_name}/artifacts/")
-    os.system(f"aws s3 sync /sensor/saved_models s3://{bucket_name}/saved_models")
+    os.system(f"aws s3 sync /sensor/saved_models s3://{bucket_name}/saved_models/")
 
 bash_success="echo 'Training Pipeline is completed successfully'"
 

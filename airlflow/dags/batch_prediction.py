@@ -8,11 +8,11 @@ from airflow.operators.bash import BashOperator
 
 def download_files(**kwargs):
     global bucket_name
-    bucket_name="sensor-data"
+    bucket_name="sensordata98866"
     global input_dir
-    input_dir="/sensor/input_files"
+    input_dir="input_files"
     os.makedirs(input_dir,exist_ok=True)
-    os.system(f"aws s3 sync s3://{bucket_name}/input_files /sensor/input_files")
+    os.system(f"aws s3 sync s3://{bucket_name}/input_files input_files/")
 
 def batch_prediction(**kwargs):
     from sensor.pipeline import batch_pred
